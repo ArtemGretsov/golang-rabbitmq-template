@@ -52,7 +52,7 @@ func (c *Consumer) Run() {
 
 			c.channel, err = c.connection.connection.Channel()
 		}()
-		
+
 		if err != nil {
 			log.Printf("channel connection error: %v\n", err)
 

@@ -43,8 +43,18 @@ func (c *Connection) init() {
 
 // Publish publishes a message to the specified queue or exchange.
 func (c *Connection) Publish(exchange, key string, mandatory, immediate bool, msg amqp.Publishing) error {
-	c.connectMutex.RLock()
-	channel, err := c.connection.Channel()
+	var (
+		channel *amqp.Channel
+		err     error
+	)
+
+	func() {
+		c.connectMutex.RLock()
+		defer c.connectMutex.RUnlock()
+
+		channel, err = c.connection.Channel()
+	}()
+
 	c.connectMutex.RUnlock()
 
 	defer channel.Close()
@@ -89,19 +99,18 @@ func (c *Connection) RegisterConsumer(queue string, autoAck bool, handler Handle
 }
 
 func (c *Connection) connect() {
-	appConfig := c.config.Get()
-	delayReconnect := time.Duration(appConfig.RabbitMQReconnectDelay) * time.Second
-
 	var (
 		err    error
 		isInit bool
 	)
 
+	appConfig := c.config.Get()
+	delayReconnect := time.Duration(appConfig.RabbitMQReconnectDelay) * time.Second
+
 	for !isInit {
 		c.connection, err = amqp.Dial(c.URL)
 
 		if err != nil {
-
 			log.Printf("rabbitMQ connection error: %v", err)
 			time.Sleep(delayReconnect)
 			continue
@@ -118,13 +127,14 @@ func (c *Connection) check() {
 	go func() {
 		closeConnectionNotify := c.connection.NotifyClose(make(chan *amqp.Error))
 		<-closeConnectionNotify
-		
+
 		func() {
 			c.connectMutex.Lock()
 			defer c.connectMutex.Unlock()
+
 			c.connect()
 		}()
-		
+
 		c.runAllConsumers()
 	}()
 
