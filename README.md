@@ -10,7 +10,7 @@ WIP
 
 ### Run
 ```bash
-go run cmd/server/main.go
+make dev
  ```
 
 
