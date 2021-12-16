@@ -53,6 +53,7 @@ func (m *Module) Safe() {
 	}()
 }
 
+// Subscribe allows you to subscribe to application stop signals
 func Subscribe(ctx context.Context) (context.Context, context.CancelFunc) {
 	return signal.NotifyContext(ctx, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT)
 }
