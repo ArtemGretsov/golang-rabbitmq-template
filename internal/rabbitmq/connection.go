@@ -86,7 +86,7 @@ func (c *Connection) RegisterConsumer(queue string, autoAck bool, handler Handle
 		connection: c,
 		queue:      queue,
 		locker:     unlockState,
-		autoAck:    false,
+		autoAck:    autoAck,
 		exclusive:  false,
 		noLocal:    false,
 		noWait:     false,
