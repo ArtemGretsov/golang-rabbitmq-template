@@ -11,7 +11,7 @@ WIP
 6. You don't have to wait for a connection to RabbitMQ and register your handlers instantly. When a RabbitMQ connection is opened, all handlers will be initialized.
 
 
-### Run
+### Run:
 ```bash
 docker-compose up -d
 make dev
