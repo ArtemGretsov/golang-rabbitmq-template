@@ -10,6 +10,7 @@ WIP
 
 ### Run
 ```bash
+docker-compose up -d
 make dev
  ```
 
