@@ -43,7 +43,13 @@ func main() {
 			return nil
 		})
 
-	err := connection.Publish("", "first_queue", false, false, amqp.Publishing{Body: []byte("Hello")})
+	err := connection.Publish(
+		"",
+		"first_queue",
+		false,
+		false,
+		amqp.Publishing{Body: []byte("Hello")},
+	)
 
 	if err != nil {
 		log.Printf("publish message error (queue: first_queue): %v", err)
