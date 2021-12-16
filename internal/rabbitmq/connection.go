@@ -119,12 +119,9 @@ func (c *Connection) check() {
 		closeConnectionNotify := c.connection.NotifyClose(make(chan *amqp.Error))
 		<-closeConnectionNotify
 
-		func() {
-			c.connectMutex.Lock()
-			defer c.connectMutex.Unlock()
-
-			c.connect()
-		}()
+		c.connectMutex.Lock()
+		c.connect()
+		c.connectMutex.Unlock()
 
 		c.runAllConsumers()
 	}()

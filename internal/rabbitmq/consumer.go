@@ -46,12 +46,9 @@ func (c *Consumer) Run() {
 		defer atomic.StoreUint32(&c.locker, unlockState)
 		var err error
 
-		func() {
-			c.connection.connectMutex.RLock()
-			defer c.connection.connectMutex.RUnlock()
-
-			c.channel, err = c.connection.connection.Channel()
-		}()
+		c.connection.connectMutex.RLock()
+		c.channel, err = c.connection.connection.Channel()
+		c.connection.connectMutex.RUnlock()
 
 		if err != nil {
 			log.Printf("channel connection error: %v\n", err)
@@ -92,7 +89,7 @@ func (c *Consumer) Run() {
 
 				log.Printf("receiving messages from RabbitMQ (queue: %s)\n", c.queue)
 
-				err := c.handler(c.ctx, message)
+				err = c.handler(c.ctx, message)
 
 				if err != nil {
 					log.Printf("error processing message from RabbitMQ (queue: %s)\n", c.queue)

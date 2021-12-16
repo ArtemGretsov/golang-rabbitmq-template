@@ -35,10 +35,8 @@ func (m *Module) Connection(name, url string) *Connection {
 		connectionInstance.connectMutex.Lock()
 
 		go func() {
-			func () {
-				defer connectionInstance.connectMutex.Unlock()
-				connectionInstance.connect()
-			}()
+			connectionInstance.connect()
+			connectionInstance.connectMutex.Unlock()
 
 			connectionInstance.check()
 			connectionInstance.checkConsumers()
