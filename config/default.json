@@ -1,0 +1,5 @@
+{
+  "rabbitmq_connection_url": "amqp://guest:guest@localhost:5672/",
+  "rabbitmq_reconnect_delay": 10,
+  "rabbitmq_reconsume_delay": 5
+}
