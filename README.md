@@ -1,6 +1,6 @@
 WIP
 
-#golang-rabbitmq-template
+# golang-rabbitmq-template
 
 ### features:
 1. Stop the application safely. Your handlers will complete their execution before stopping the application.
