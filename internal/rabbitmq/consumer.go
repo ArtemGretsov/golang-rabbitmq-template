@@ -16,7 +16,7 @@ const (
 	unlockState
 )
 
-// Consumer - message listener with RabbitMQ
+// Consumer - message listener with RabbitMQ.
 type Consumer struct {
 	ctx        context.Context
 	shutdown   *shutdown.Module
@@ -25,7 +25,7 @@ type Consumer struct {
 	handler    HandlerConsumer
 	locker     uint32
 
-	// Amqp's Consume arguments
+	// Amqp's Consume arguments.
 	queue     string
 	consumer  string
 	autoAck   bool
