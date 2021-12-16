@@ -46,10 +46,13 @@ func (c *Consumer) Run() {
 		defer atomic.StoreUint32(&c.locker, unlockState)
 		var err error
 
-		c.connection.connectMutex.RLock()
-		c.channel, err = c.connection.connection.Channel()
-		c.connection.connectMutex.RUnlock()
+		func() {
+			c.connection.connectMutex.RLock()
+			defer c.connection.connectMutex.RUnlock()
 
+			c.channel, err = c.connection.connection.Channel()
+		}()
+		
 		if err != nil {
 			log.Printf("channel connection error: %v\n", err)
 
