@@ -35,12 +35,6 @@ type Connection struct {
 	PrintedURL string
 }
 
-func (c *Connection) init() {
-	c.connect()
-	c.check()
-	c.checkConsumers()
-}
-
 // Publish publishes a message to the specified queue or exchange.
 func (c *Connection) Publish(exchange, key string, mandatory, immediate bool, msg amqp.Publishing) error {
 	var (
@@ -54,8 +48,6 @@ func (c *Connection) Publish(exchange, key string, mandatory, immediate bool, ms
 
 		channel, err = c.connection.Channel()
 	}()
-
-	c.connectMutex.RUnlock()
 
 	defer channel.Close()
 
@@ -123,7 +115,6 @@ func (c *Connection) connect() {
 }
 
 func (c *Connection) check() {
-
 	go func() {
 		closeConnectionNotify := c.connection.NotifyClose(make(chan *amqp.Error))
 		<-closeConnectionNotify
@@ -141,7 +132,6 @@ func (c *Connection) check() {
 }
 
 func (c *Connection) checkConsumers() {
-
 	go func() {
 		for {
 			ctx, stop := shutdown.Subscribe(c.ctx)
