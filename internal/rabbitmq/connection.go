@@ -20,8 +20,9 @@ type HandlerConsumer func(context.Context, amqp.Delivery) error
 
 // Connection - connection RabbitMQ.
 type Connection struct {
-	ctx    context.Context
-	config config.Configurator
+	ctx      context.Context
+	config   config.Configurator
+	shutdown *shutdown.Module
 
 	connectMutex   sync.RWMutex
 	consumersMutex sync.RWMutex
@@ -69,6 +70,7 @@ func (c *Connection) RegisterConsumer(queue string, autoAck bool, handler Handle
 	defer c.consumersMutex.Unlock()
 
 	consumer := &Consumer{
+		shutdown:   c.shutdown,
 		ctx:        c.ctx,
 		handler:    handler,
 		connection: c,

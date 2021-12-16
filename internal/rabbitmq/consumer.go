@@ -7,6 +7,8 @@ import (
 	"sync/atomic"
 
 	"github.com/streadway/amqp"
+
+	"github.com/ArtemGretsov/golang-rabbitmq-template/internal/shutdown"
 )
 
 const (
@@ -17,6 +19,7 @@ const (
 // Consumer - message listener with RabbitMQ
 type Consumer struct {
 	ctx        context.Context
+	shutdown   *shutdown.Module
 	connection *Connection
 	channel    *amqp.Channel
 	handler    HandlerConsumer
@@ -75,6 +78,9 @@ func (c *Consumer) Run() {
 			message := delivery
 
 			go func() {
+				c.shutdown.SafeRun()
+				defer c.shutdown.SafeComplete()
+
 				defer func() {
 					if panicMessage := recover(); panicMessage != nil {
 						log.Printf("unhandled exception: %s Stack: %s", panicMessage, debug.Stack())

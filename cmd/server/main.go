@@ -19,7 +19,7 @@ func main() {
 	shutdownModule := &shutdown.Module{Ctx: ctx}
 	shutdownModule.Safe()
 
-	rabbitMQModule := &rabbitmq.Module{Config: configurator, Ctx: ctx}
+	rabbitMQModule := &rabbitmq.Module{Config: configurator, Ctx: ctx, Shutdown: shutdownModule}
 
 	// examples
 	appConfig := configurator.Get()
@@ -29,11 +29,10 @@ func main() {
 		"first_queue",
 		true,
 		func(ctx context.Context, delivery amqp.Delivery) error {
-			fmt.Printf("message: %s\n", delivery.Body)
+			log.Printf("message: %s\n", delivery.Body)
 
 			return nil
 		})
-
 
 	connection.RegisterConsumer(
 		"second_queue",
@@ -44,12 +43,11 @@ func main() {
 			return nil
 		})
 
-
-	err := connection.Publish("", "first_queue", false, false, amqp.Publishing{ Body: []byte("Hello")})
+	err := connection.Publish("", "first_queue", false, false, amqp.Publishing{Body: []byte("Hello")})
 
 	if err != nil {
 		log.Printf("publish message error (queue: first_queue): %v", err)
 	}
 
-	<- make(chan struct{})
+	<-make(chan struct{})
 }
