@@ -48,12 +48,12 @@ func (c *Connection) Publish(exchange, key string, mandatory, immediate bool, ms
 
 		channel, err = c.connection.Channel()
 	}()
-
-	defer channel.Close()
-
+	
 	if err != nil {
 		return errors.Wrapf(err, "error opening RabbitMQ channel to post message (queue: %s)", key)
 	}
+
+	defer channel.Close()
 
 	err = channel.Publish(exchange, key, mandatory, immediate, msg)
 
